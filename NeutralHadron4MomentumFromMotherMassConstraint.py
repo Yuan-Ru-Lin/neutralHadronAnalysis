@@ -1,3 +1,4 @@
+import ROOT
 from ROOT import TLorentzVector, TVector3
 from ROOT import Belle2
 from basf2 import Module
@@ -18,8 +19,9 @@ class NeutralHadron4MomentumFromMotherMassConstraint(Module):
         self.neutralMass = 0.939565413
 
     def event(self):
-        particles = Belle2.PyStoreObj(self.particleList).obj()
-        for particle in particles:
+        particleList = Belle2.PyStoreObj(self.particleList).obj()
+        toRemove = ROOT.std.vector('unsigned int')()
+        for particle in particleList:
             #self.motherMass = particle.getMass()  # XXX: Should move this to ``initialize`` later
             charged = particle.getDaughter(0)
             neutral = particle.getDaughter(1)
@@ -37,5 +39,6 @@ class NeutralHadron4MomentumFromMotherMassConstraint(Module):
                 neutral.set4Vector(self.calculatedNeutralHadron4Momentum)
                 particle.set4Vector(neutral.get4Vector() + charged.get4Vector())
             else:  # Remove this Particle from its ParticleList
-                
+                toRemove.push_back(particle.getArrayIndex())
+        particleList.removeParticles(toRemove)
 
