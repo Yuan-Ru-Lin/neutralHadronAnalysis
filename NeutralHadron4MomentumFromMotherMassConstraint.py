@@ -13,8 +13,8 @@ class NeutralHadron4MomentumFromMotherMassConstraint(Module):
         self.path.add_module(self)
 
         self.neutralDirection = TVector3()
-        self.neutralMomentum = TVector3()
-        self.calculatedNeutralHadron4Momentum = TLorentzVector()
+        self.neutral3Momentum = TVector3()
+        self.neutral4Momentum = TLorentzVector()
         self.motherMass = 5.27962
         self.neutralMass = 0.939565413
 
@@ -34,9 +34,9 @@ class NeutralHadron4MomentumFromMotherMassConstraint(Module):
             D = (a**2 - c**2) * d + b**2
             if D >= 0:
                 neutralP = (-1. * a * b - c * D**(0.5)) / (a**2-c**2)
-                self.neutralMomentum.SetMagThetaPhi(neutralP, self.neutralDirection.Theta(), self.neutralDirection.Phi())
-                self.calculatedNeutralHadron4Momentum.SetVectM(self.neutralMomentum, self.neutralMass)
-                neutral.set4Vector(self.calculatedNeutralHadron4Momentum)
+                self.neutral3Momentum.SetMagThetaPhi(neutralP, self.neutralDirection.Theta(), self.neutralDirection.Phi())
+                self.neutral4Momentum.SetVectM(self.neutral3Momentum, self.neutralMass)
+                neutral.set4Vector(self.neutral4Momentum)
                 particle.set4Vector(neutral.get4Vector() + charged.get4Vector())
             else:  # Remove this Particle from its ParticleList
                 toRemove.push_back(particle.getArrayIndex())
